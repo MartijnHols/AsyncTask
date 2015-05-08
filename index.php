@@ -1,11 +1,6 @@
 <?php
 
-define('SUPERCLOSURE_SERIALIZER_SECRET_SIGNING_KEY', '9e6f3d6c-c9fc-4c4f-a646-08d5d3c97824');
-
-// "jeremeamia/superclosure": "~2.0"
-require(__DIR__ . '/vendor/autoload.php');
-
-use SuperClosure\Serializer;
+require(__DIR__ . '/config.php');
 
 /*
 CREATE TABLE IF NOT EXISTS `asynctask` (
@@ -24,7 +19,7 @@ mysql_select_db('async_test');
 $deleteWhenFinished = false;
 
 function async($callback) {
-	$serializer = new Serializer(null, SUPERCLOSURE_SERIALIZER_SECRET_SIGNING_KEY);
+	$serializer = new SuperClosure\Serializer(null, SUPERCLOSURE_SERIALIZER_SECRET_SIGNING_KEY);
 
 	$closure = $serializer->serialize($callback);
 
