@@ -31,5 +31,5 @@ function async($callback) {
     return 'pindakaas';
 };";s:7:"context";a:0:{}s:7:"binding";N;s:5:"scope";N;s:8:"isStatic";b:0;}}' (length=180)*/
 async(function () {
-	return 'pindakaas';
+	throw new Exception('Oops! Something broke.');
 });

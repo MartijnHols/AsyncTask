@@ -8,9 +8,6 @@ function logException(Exception $e) {
 	//NYI
 	throw $e;
 }
-function logResult($result) {
-	//dev/null
-}
 
 function executeIteration() {
 	try {
@@ -27,6 +24,7 @@ function executeIteration() {
 				$closure = $serializer->unserialize($row->closure);
 				$result = $closure();
 			} catch (Exception $e) {
+				$result = serialize($e);
 			}
 			if ($updater = $db->prepare("UPDATE asynctask SET completedOn=NOW(), result=? WHERE id=?")) {
 				$updater->bind_param('si', $result, $row->id);
