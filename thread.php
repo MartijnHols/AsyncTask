@@ -11,9 +11,11 @@ function logException(Exception $e) {
 
 function executeIteration() {
 	try {
-		// Reconnect every time to
-		$db = mysqli_connect('127.0.0.1', 'root', '', 'async_test');
-		if ($db->connect_errno) {
+		// Reconnect every time to prevent crashes when connection messes up
+		$db = connect();
+		if ($db->errno) {
+			// Doesn't matter, try again later!
+			logException(new Exception('Connection failed: (' . $db->errno . ') ' . $db->error));
 			return false;
 		}
 		$serializer = new SuperClosure\Serializer(null, SUPERCLOSURE_SERIALIZER_SECRET_SIGNING_KEY);

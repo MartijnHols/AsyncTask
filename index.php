@@ -13,19 +13,28 @@ KEY `completedOn` (`completedOn`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
  */
 
-mysql_connect('127.0.0.1', 'root', '');
-mysql_select_db('async_test');
+$db = connect();
+if ($db->errno) {
+	throw new Exception('No database connection possible: ' . $db->error);
+}
 
 $deleteWhenFinished = false;
 
 function async($callback) {
+	global $db;
+
 	$serializer = new SuperClosure\Serializer(null, SUPERCLOSURE_SERIALIZER_SECRET_SIGNING_KEY);
 
 	$closure = $serializer->serialize($callback);
 
-	mysql_query("INSERT INTO asynctask
-		(closure, addedOn)
-		VALUES('" . mysql_real_escape_string($closure) . "', NOW())");
+	if ($updater = $db->prepare("INSERT INTO asynctask
+			(closure, addedOn)
+			VALUES(?, NOW())")) {
+		$updater->bind_param('s', $closure);
+		$updater->execute();
+	} else {
+		throw new Exception('Prepare failed: (' . $db->errno . ') ' . $db->error);
+	}
 }
 /*string 'C:32:"SuperClosure\SerializableClosure":134:{a:5:{s:4:"code";s:40:"function () {
     return 'pindakaas';

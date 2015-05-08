@@ -6,3 +6,7 @@ define('SUPERCLOSURE_SERIALIZER_SECRET_SIGNING_KEY', '9e6f3d6c-c9fc-4c4f-a646-08
 
 // "jeremeamia/superclosure": "~2.0"
 require(__DIR__ . '/vendor/autoload.php');
+
+function connect() {
+	return mysqli_connect('127.0.0.1', 'root', '', 'async_test');
+}
