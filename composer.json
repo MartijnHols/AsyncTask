@@ -1,0 +1,13 @@
+{
+	"name": "martijnhols/asynctask",
+	"description": "Store tasks in a database and execute them asynchronously with a cronjob.",
+	"authors": [
+		{
+			"name": "Martijn Hols",
+			"email": "martijnhols@hotmail.com"
+		}
+	],
+	"require": {
+		"jeremeamia/superclosure": "~2.0"
+	}
+}
