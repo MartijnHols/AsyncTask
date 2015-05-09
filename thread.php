@@ -19,7 +19,7 @@ function executeIteration() {
 			logException(new Exception('Connection failed: (' . $db->errno . ') ' . $db->error));
 			return false;
 		}
-		$serializer = new SuperClosure\Serializer(null, SUPERCLOSURE_SERIALIZER_SECRET_SIGNING_KEY);
+		$serializer = new SuperClosure\Serializer(null, '9e6f3d6c-c9fc-4c4f-a646-08d5d3c97824');
 
 		$query = $db->query('SELECT id, closure FROM asynctask WHERE completedOn IS NULL');
 		while ($row = $query->fetch_object()) {
