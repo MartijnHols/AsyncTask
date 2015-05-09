@@ -9,6 +9,7 @@ function logException(Exception $e) {
 	throw $e;
 }
 
+//TODO: Start a new process that executes each task seperately? Might work better if a task has a sleep(x), or even if it's long running without that
 function executeIteration() {
 	try {
 		// Reconnect every time to prevent crashes when connection messes up

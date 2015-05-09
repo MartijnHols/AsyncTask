@@ -36,9 +36,10 @@ function async($callback) {
 		throw new Exception('Prepare failed: (' . $db->errno . ') ' . $db->error);
 	}
 }
-/*string 'C:32:"SuperClosure\SerializableClosure":134:{a:5:{s:4:"code";s:40:"function () {
-    return 'pindakaas';
-};";s:7:"context";a:0:{}s:7:"binding";N;s:5:"scope";N;s:8:"isStatic";b:0;}}' (length=180)*/
-async(function () {
-	throw new Exception('Oops! Something broke.');
+
+$to = 'asynctasktest@mailinator.com';
+$subject = 'AsyncTask test';
+$content = 'Example content';
+async(function () use($to, $subject, $content) {
+	mail($to, $subject, $content);
 });
