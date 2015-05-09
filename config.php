@@ -26,16 +26,6 @@ if ($db->errno) {
 	throw new Exception('No database connection possible: ' . $db->error);
 }
 
-// Deze oplossing heeft het probleem dat als je dit in een config zet je dan altijd AsyncTask autoload.
-AsyncTask::$storeAsyncTask = function ($closure) use ($db) {
-	if ($updater = $db->prepare("INSERT INTO asynctask (closure) VALUES(?)")) {
-		$updater->bind_param('s', $closure);
-		$updater->execute();
-		return true;
-	} else {
-		throw new Exception('Prepare failed: (' . $db->errno . ') ' . $db->error);
-	}
-};
 class AsyncTask {
 	const DEFAULT_PRIORITY = 0;
 
@@ -44,15 +34,15 @@ class AsyncTask {
 	/**
 	 * @var callable A function that stores the task somewhere so it can be executed later.
 	 */
-	public static $storeAsyncTask;
+	public $storeAsyncTask;
 
 	/**
 	 * @param string $closure
 	 *
 	 * @return mixed
 	 */
-	protected static function storeTask($closure) {
-		$store = static::$storeAsyncTask;
+	protected function storeTask($closure) {
+		$store = $this->storeAsyncTask;
 		return $store($closure);
 	}
 
@@ -62,7 +52,7 @@ class AsyncTask {
 	 *
 	 * @throws Exception
 	 */
-	public static function queue($callable, $priority = AsyncTask::DEFAULT_PRIORITY) {
+	public function queue($callable, $priority = AsyncTask::DEFAULT_PRIORITY) {
 		$serializer = new SuperClosure\Serializer(null, static::$superClosureSerializerSecretSigningKey);
 
 		$closure = $serializer->serialize($callable);
@@ -72,4 +62,20 @@ class AsyncTask {
 			throw new Exception('Failed to add the task to the queue. Storage failed.');
 		}
 	}
+
+	public function __invoke($callable, $priority = AsyncTask::DEFAULT_PRIORITY) {
+		$this->queue($callable, $priority);
+	}
 }
+
+// Voor een lazy load systeem zoals dat van Yii
+$queue = new AsyncTask();
+$queue->storeAsyncTask = function ($closure) use ($db) {
+	if ($updater = $db->prepare("INSERT INTO asynctask (closure) VALUES(?)")) {
+		$updater->bind_param('s', $closure);
+		$updater->execute();
+		return true;
+	} else {
+		throw new Exception('Prepare failed: (' . $db->errno . ') ' . $db->error);
+	}
+};
