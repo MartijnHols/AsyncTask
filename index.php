@@ -4,12 +4,13 @@ require(__DIR__ . '/config.php');
 
 /*
 CREATE TABLE IF NOT EXISTS `asynctask` (
-`id` int(11) NOT NULL AUTO_INCREMENT,
-`closure` text NOT NULL,
-`addedOn` datetime NOT NULL,
-`completedOn` datetime DEFAULT NULL,
-PRIMARY KEY (`id`),
-KEY `completedOn` (`completedOn`)
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `closure` text NOT NULL,
+  `addedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `completedOn` datetime DEFAULT NULL,
+  `result` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `completedOn` (`completedOn`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
  */
 
@@ -28,8 +29,8 @@ function async($callback) {
 	$closure = $serializer->serialize($callback);
 
 	if ($updater = $db->prepare("INSERT INTO asynctask
-			(closure, addedOn)
-			VALUES(?, NOW())")) {
+			(closure)
+			VALUES(?)")) {
 		$updater->bind_param('s', $closure);
 		$updater->execute();
 	} else {
